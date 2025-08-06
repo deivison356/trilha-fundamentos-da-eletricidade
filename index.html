@@ -1,150 +1,273 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<title>Prova Online com Melhorias</title>
-<style>
-  html, body {
-    margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; background: #f5f5f5;
-  }
-  body.dark-mode {
-    background: #1e1e1e; color: #f0f0f0;
-  }
-  #cronometro {
-    background-color: #222; color: white; text-align: center; padding: 10px;
-    font-size: 18px; position: fixed; top: 0; left: 0; width: 100%; z-index: 10000; display: none;
-  }
-  #alerta, #alertaTempo, #mensagem {
-    display: none; position: fixed; top: 50px; left: 0; width: 100%;
-    background-color: #d32f2f; color: white; text-align: center;
-    padding: 10px; font-weight: bold; z-index: 9999;
-  }
-  #acesso {
-    width: 100%; max-width: 600px; margin: 100px auto 40px auto; padding: 20px;
-    background: white; box-sizing: border-box; border-radius: 8px;
-    text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
-  body.dark-mode #acesso {
-    background: #333;
-  }
-  input, button {
-    padding: 10px; font-size: 16px; margin: 5px; width: 80%; max-width: 400px; box-sizing: border-box;
-  }
-  button {
-    cursor: pointer; background-color: #007bff; color: white;
-    border: none; border-radius: 6px; font-size: 18px; padding: 12px 20px;
-  }
-  #toggleDarkMode {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: #444;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    z-index: 11000;
-  }
-  #iframeProva {
-    width: 100%; height: calc(100vh - 60px); border: none; display: none; margin-top: 60px;
-  }
-  #calculadora {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 240px;
-    background: #222;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    color: white;
-    font-family: Arial, sans-serif;
-    z-index: 11000;
-  }
-  #calculadora .title {
-    margin-bottom: 10px;
-    font-weight: bold;
-    font-size: 16px;
-    text-align: center;
-  }
-  #calcDisplay {
-    width: 100%; padding: 8px; font-size: 18px; border-radius: 4px;
-    border: none; margin-bottom: 10px; text-align: right;
-    background: #333; color: white;
-  }
-  #calculadora .row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-  }
-  #calculadora button {
-    flex: 1;
-    padding: 10px;
-    margin: 2px;
-    font-size: 18px;
-    background: #444;
-    border: none;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    user-select: none;
-  }
-  #calculadora button:hover {
-    background: #666;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>Prova Online com Calculadora</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; background: #f5f5f5;
+    }
+    #cronometro {
+      background-color: #222; color: white; text-align: center; padding: 10px;
+      font-size: 18px; position: fixed; top: 0; left: 0; width: 100%; z-index: 10000; display: none;
+    }
+    #alerta, #alertaTempo, #mensagem {
+      display: none; position: fixed; top: 50px; left: 0; width: 100%;
+      background-color: #d32f2f; color: white; text-align: center;
+      padding: 10px; font-weight: bold; z-index: 9999;
+    }
+    #acesso {
+      width: 100%; max-width: 600px; margin: 100px auto 40px auto; padding: 20px;
+      background: white; box-sizing: border-box; border-radius: 8px;
+      text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 10px; font-size: 16px; margin: 5px; width: 80%; max-width: 400px; box-sizing: border-box;
+    }
+    button {
+      cursor: pointer; background-color: #007bff; color: white;
+      border: none; border-radius: 6px; font-size: 18px; padding: 12px 20px;
+    }
+    #iframeProva {
+      width: 100%; height: calc(100vh - 60px); border: none; display: none; margin-top: 60px;
+    }
+
+    #calculadora {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 220px;
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      color: white;
+      font-family: Arial, sans-serif;
+      z-index: 11000;
+    }
+    #calculadora div.title {
+      margin-bottom: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      text-align: center;
+    }
+    #calcDisplay {
+      width: 100%; padding: 8px; font-size: 18px; border-radius: 4px;
+      border: none; margin-bottom: 10px; text-align: right;
+      background: #333; color: white;
+    }
+    #calculadora button {
+      width: 25%;
+      padding: 10px;
+      font-size: 18px;
+      margin: 1px 0;
+      background: #444;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+    #calculadora button:hover {
+      background: #666;
+    }
+  </style>
 </head>
 <body>
-<button id="toggleDarkMode">Modo Escuro</button>
-<div id="cronometro">Tempo restante: 90:00</div>
+
+<div id="cronometro">Tempo restante: 60:00</div>
 <div id="alerta">⚠️ Você saiu da aba ou da tela cheia. Penalização aplicada.</div>
-<div id="alertaTempo">⚠️ Faltam apenas 10 minutos para o término da prova.</div>
+<div id="alertaTempo">⚠️ Faltam apenas 20 minutos para o término da prova.</div>
 <div id="mensagem"></div>
+
 <div id="acesso">
   <h2>Digite a senha para iniciar a prova</h2>
   <input type="password" id="senha" placeholder="Senha" />
   <button id="btnIniciar">Iniciar Prova</button>
 </div>
-<iframe id="iframeProva" src="https://docs.google.com/forms/d/e/1FAIpQLSfTH8OBK_0T3HNO9CqTGqKSjXcjxpKJJ0PImnJceY6R7usQ-A/viewform?embedded=true"></iframe>
+
+<iframe
+  id="iframeProva"
+  src="https://docs.google.com/forms/d/e/1FAIpQLSfZB9lfPqm5MUZC7UpaU2sYHxF4-Tdi-HIbKTyXLKW2bjDRpA/viewform?usp=dialog"
+></iframe>
+
 <div id="calculadora">
   <div class="title">Calculadora</div>
   <input type="text" id="calcDisplay" readonly />
-  <div class="row">
-    <button onclick="calcPress('+')">+</button>
-    <button onclick="calcPress('-')">−</button>
-    <button onclick="calcPress('*')">×</button>
-    <button onclick="calcPress('/')">÷</button>
-  </div>
-  <div class="row">
+  <div>
     <button onclick="calcPress('7')">7</button>
     <button onclick="calcPress('8')">8</button>
     <button onclick="calcPress('9')">9</button>
-    <button onclick="calcClear()">C</button>
+    <button onclick="calcPress('/')">÷</button>
   </div>
-  <div class="row">
+  <div>
     <button onclick="calcPress('4')">4</button>
     <button onclick="calcPress('5')">5</button>
     <button onclick="calcPress('6')">6</button>
-    <button onclick="calcPress('(')">(</button>
+    <button onclick="calcPress('*')">×</button>
   </div>
-  <div class="row">
+  <div>
     <button onclick="calcPress('1')">1</button>
     <button onclick="calcPress('2')">2</button>
     <button onclick="calcPress('3')">3</button>
-    <button onclick="calcPress(')')">)</button>
+    <button onclick="calcPress('-')">−</button>
   </div>
-  <div class="row">
+  <div>
     <button onclick="calcPress('0')">0</button>
-    <button onclick="calcPress('.')">.</button>
-    <button onclick="calcCalculate()" style="flex: 2;">=</button>
+    <button onclick="calcClear()">C</button>
+    <button onclick="calcCalculate()">=</button>
+    <button onclick="calcPress('+')">+</button>
   </div>
 </div>
-<audio id="somPenalidade" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
-<audio id="somAviso" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
-<audio id="somErro" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"></audio>
+
 <script>
-  document.getElementById("toggleDarkMode").addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
+  let tempoRestante = 60 * 60; // 60 minutos
+  let intervaloCronometro;
+  let contadorSaidas = 0;
+  let saiuDaAba = false;
+
+  const cronometro = document.getElementById("cronometro");
+  const alerta = document.getElementById("alerta");
+  const alertaTempo = document.getElementById("alertaTempo");
+  const iframe = document.getElementById("iframeProva");
+  const mensagem = document.getElementById("mensagem");
+  const acesso = document.getElementById("acesso");
+  const btnIniciar = document.getElementById("btnIniciar");
+
+  btnIniciar.addEventListener('click', function(event) {
+    event.preventDefault();
+    validarSenha();
   });
+
+  function validarSenha() {
+    const senhaDigitada = document.getElementById('senha').value.trim();
+    const hoje = new Date();
+    const dia = String(hoje.getDate()).padStart(2, '0');
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    const ano = hoje.getFullYear();
+    const senhaCorreta = dia + mes + ano;
+
+    if (senhaDigitada === senhaCorreta) {
+      acesso.style.display = 'none';
+      iframe.style.display = 'block';
+      cronometro.style.display = 'block';
+      entrarEmTelaCheia();
+      intervaloCronometro = setInterval(atualizarCronometro, 1000);
+    } else {
+      alert('Senha incorreta!');
+    }
+  }
+
+  function entrarEmTelaCheia() {
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      el.requestFullscreen().catch(() => {
+        mensagem.style.display = "block";
+        mensagem.innerText = "⚠️ Não foi possível ativar o modo tela cheia.";
+      });
+    }
+  }
+
+  function atualizarCronometro() {
+    const minutos = Math.floor(tempoRestante / 60);
+    const segundos = tempoRestante % 60;
+    cronometro.textContent = `Tempo restante: ${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+
+    if (tempoRestante === 20 * 60) {
+      alertaTempo.style.display = "block";
+    }
+
+    if (tempoRestante > 0) {
+      tempoRestante--;
+    } else {
+      encerrarProva();
+    }
+  }
+
+  function aplicarPenalizacao() {
+    contadorSaidas++;
+    alerta.style.display = "block";
+
+    let penalidade = 1200; // 20 minutos = 1200 segundos
+
+    if (contadorSaidas < 3) {
+      tempoRestante = Math.max(tempoRestante - penalidade, 0);
+      saiuDaAba = true;
+    } else {
+      encerrarProva();
+    }
+  }
+
+  function encerrarProva() {
+    clearInterval(intervaloCronometro);
+    iframe.style.display = 'none';
+    cronometro.style.display = 'none';
+    alerta.style.display = 'none';
+    alertaTempo.style.display = 'none';
+    mensagem.style.display = 'block';
+    mensagem.innerText = "Prova encerrada por tentativa de fraude.";
+
+    document.exitFullscreen?.();
+    setTimeout(() => {
+      window.close();
+    }, 1500);
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      aplicarPenalizacao();
+    } else if (saiuDaAba && contadorSaidas < 3) {
+      alerta.style.display = "none";
+      mensagem.style.display = "block";
+      mensagem.innerText = `⚠️ Penalização aplicada (${contadorSaidas}ª vez).`;
+      setTimeout(() => mensagem.style.display = "none", 3000);
+      saiuDaAba = false;
+    }
+  });
+
+  document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement) {
+      aplicarPenalizacao();
+    }
+  });
+
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.key.toLowerCase() === 'u') ||
+      (e.ctrlKey && e.shiftKey && ['i', 'j'].includes(e.key.toLowerCase()))
+    ) {
+      e.preventDefault();
+      mensagem.style.display = "block";
+      mensagem.innerText = "⚠️ Esta função está desabilitada durante a prova.";
+      setTimeout(() => mensagem.style.display = "none", 3000);
+    }
+  });
+
+  let calcExpression = '';
+
+  function calcPress(valor) {
+    calcExpression += valor;
+    document.getElementById('calcDisplay').value = calcExpression;
+  }
+
+  function calcClear() {
+    calcExpression = '';
+    document.getElementById('calcDisplay').value = '';
+  }
+
+  function calcCalculate() {
+    try {
+      let resultado = eval(calcExpression);
+      document.getElementById('calcDisplay').value = resultado;
+      calcExpression = resultado.toString();
+    } catch {
+      document.getElementById('calcDisplay').value = 'Erro';
+      calcExpression = '';
+    }
+  }
 </script>
+
 </body>
 </html>
