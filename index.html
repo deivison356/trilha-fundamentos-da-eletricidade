@@ -42,12 +42,12 @@
     margin-bottom: 10px;
     display: none;
   }
-  /* Calculadora no canto inferior direito */
+  /* Calculadora maior com botão minimizar */
   #calculadora {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    width: 180px;
+    width: 250px;
     background: #222;
     padding: 10px;
     border-radius: 8px;
@@ -55,17 +55,34 @@
     color: white;
     font-family: Arial, sans-serif;
     z-index: 11000;
+    transition: height 0.3s ease;
   }
-  #calculadora .title {
-    text-align: center;
+  #calcHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 8px;
+  }
+  #calcHeader .title {
     font-weight: bold;
     font-size: 16px;
   }
+  #btnMinimizar {
+    background: #444;
+    border: none;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 1;
+  }
   #calcDisplay {
     width: 100%;
-    padding: 6px 8px;
-    font-size: 16px;
+    padding: 8px;
+    font-size: 18px;
     border-radius: 4px;
     border: none;
     margin-bottom: 8px;
@@ -74,15 +91,22 @@
     color: white;
     user-select: none;
   }
-  #calculadora .row {
+  #calculadora.minimized #calcBody {
+    display: none;
+  }
+  #calculadora.minimized {
+    height: auto;
+    padding-bottom: 8px;
+  }
+  #calcBody .row {
     display: flex;
     justify-content: space-between;
     margin-bottom: 5px;
   }
-  #calculadora button {
+  #calcBody button {
     flex: 1;
-    margin: 0 2px;
-    padding: 8px 0;
+    margin: 0 3px;
+    padding: 10px 0;
     font-size: 16px;
     background: #444;
     border: none;
@@ -92,7 +116,7 @@
     user-select: none;
     transition: background-color 0.2s;
   }
-  #calculadora button:hover {
+  #calcBody button:hover {
     background: #666;
   }
 </style>
@@ -111,42 +135,47 @@
   <iframe id="iframeForm" src="https://docs.google.com/forms/d/e/1FAIpQLSfZB9lfPqm5MUZC7UpaU2sYHxF4-Tdi-HIbKTyXLKW2bjDRpA/viewform?usp=dialog" allowfullscreen></iframe>
 
   <div id="calculadora">
-    <div class="title">Calculadora</div>
-    <input type="text" id="calcDisplay" readonly />
-    <div class="row">
-      <button onclick="calcPress('7')">7</button>
-      <button onclick="calcPress('8')">8</button>
-      <button onclick="calcPress('9')">9</button>
-      <button onclick="calcPress('+')">+</button>
+    <div id="calcHeader">
+      <div class="title">Calculadora</div>
+      <button id="btnMinimizar" title="Minimizar">–</button>
     </div>
-    <div class="row">
-      <button onclick="calcPress('4')">4</button>
-      <button onclick="calcPress('5')">5</button>
-      <button onclick="calcPress('6')">6</button>
-      <button onclick="calcPress('-')">−</button>
-    </div>
-    <div class="row">
-      <button onclick="calcPress('1')">1</button>
-      <button onclick="calcPress('2')">2</button>
-      <button onclick="calcPress('3')">3</button>
-      <button onclick="calcPress('*')">×</button>
-    </div>
-    <div class="row">
-      <button onclick="calcPress('0')">0</button>
-      <button onclick="calcPress('.')">.</button>
-      <button onclick="calcBackspace()">←</button>
-      <button onclick="calcPress('/')">÷</button>
-    </div>
-    <div class="row">
-      <button onclick="calcClear()" style="flex:1 1 100%;">C</button>
-      <button onclick="calcCalculate()" style="flex:1 1 100%; margin-left: 5px;">=</button>
+    <div id="calcBody">
+      <input type="text" id="calcDisplay" readonly />
+      <div class="row">
+        <button onclick="calcPress('7')">7</button>
+        <button onclick="calcPress('8')">8</button>
+        <button onclick="calcPress('9')">9</button>
+        <button onclick="calcPress('+')">+</button>
+      </div>
+      <div class="row">
+        <button onclick="calcPress('4')">4</button>
+        <button onclick="calcPress('5')">5</button>
+        <button onclick="calcPress('6')">6</button>
+        <button onclick="calcPress('-')">−</button>
+      </div>
+      <div class="row">
+        <button onclick="calcPress('1')">1</button>
+        <button onclick="calcPress('2')">2</button>
+        <button onclick="calcPress('3')">3</button>
+        <button onclick="calcPress('*')">×</button>
+      </div>
+      <div class="row">
+        <button onclick="calcPress('0')">0</button>
+        <button onclick="calcPress('.')">.</button>
+        <button onclick="calcBackspace()">←</button>
+        <button onclick="calcPress('/')">÷</button>
+      </div>
+      <div class="row">
+        <button onclick="calcClear()" style="flex:1; margin-right: 5px;">C</button>
+        <button onclick="calcCalculate()" style="flex:1;">=</button>
+      </div>
     </div>
   </div>
 </div>
 
 <audio id="somPenalidade" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
-<audio id="somAviso" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 <audio id="somErro" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"></audio>
+<audio id="somAviso" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 
 <script>
   const tempoTotal = 60 * 60; // 60 minutos
@@ -154,7 +183,6 @@
   let tempoRestante = tempoTotal;
   let contadorPenalidades = 0;
   let intervaloCronometro;
-  let saiuDaAba = false;
 
   const telaLogin = document.getElementById('telaLogin');
   const telaProva = document.getElementById('telaProva');
@@ -165,6 +193,10 @@
   const senhaInput = document.getElementById('senha');
   const somPenalidade = document.getElementById('somPenalidade');
   const somErro = document.getElementById('somErro');
+  const somAviso = document.getElementById('somAviso');
+  const calculadora = document.getElementById('calculadora');
+  const btnMinimizar = document.getElementById('btnMinimizar');
+  const calcBody = document.getElementById('calcBody');
 
   btnIniciar.addEventListener('click', () => {
     const senhaDigitada = senhaInput.value.trim();
@@ -200,11 +232,10 @@
     const segundos = tempoRestante % 60;
     cronometro.textContent = `Tempo restante: ${String(minutos).padStart(2,'0')}:${String(segundos).padStart(2,'0')}`;
 
-    // Exibir alerta com som quando restar 10 minutos
+    // Exibir alerta e som quando restar 10 minutos
     if (tempoRestante === 10 * 60) {
       alerta.textContent = '⚠️ Faltam apenas 10 minutos para o término da prova.';
       alerta.style.display = 'block';
-      const somAviso = document.getElementById('somAviso');
       somAviso.play();
       setTimeout(() => { alerta.style.display = 'none'; }, 5000);
     }
@@ -232,7 +263,7 @@
   });
 
   function aplicarPenalidade() {
-    if (contadorPenalidades >= 3) return; // Já fechou, não faz nada
+    if (contadorPenalidades >= 3) return; // Já finalizou
 
     contadorPenalidades++;
     tempoRestante -= penalidadeTempo;
@@ -253,8 +284,15 @@
     alerta.style.display = 'none';
     cronometro.textContent = mensagem;
     somErro.play();
-    // Fecha a página após 2 segundos
-    setTimeout(() => window.close(), 2000);
+
+    // Tenta fechar a aba, se não conseguir redireciona para uma página de bloqueio (ou pode usar alertar)
+    setTimeout(() => {
+      if (!window.close()) {
+        // Caso window.close não funcione, redireciona para página de bloqueio (altere o link se quiser)
+        window.location.href = 'about:blank';
+        // ou uma página customizada: window.location.href = 'https://seusite.com/bloqueio.html';
+      }
+    }, 2000);
   }
 
   // Calculadora
@@ -278,7 +316,6 @@
 
   function calcCalculate() {
     try {
-      // Substituir × e ÷ pelos operadores JS
       let expressao = calcExpression.replace(/×/g, '*').replace(/÷/g, '/');
       let resultado = Function('"use strict"; return (' + expressao + ')')();
       calcExpression = resultado.toString();
@@ -288,6 +325,18 @@
       calcExpression = '';
     }
   }
+
+  // Botão minimizar calculadora
+  btnMinimizar.addEventListener('click', () => {
+    calculadora.classList.toggle('minimized');
+    if(calculadora.classList.contains('minimized')) {
+      btnMinimizar.textContent = '+';
+      btnMinimizar.title = "Maximizar";
+    } else {
+      btnMinimizar.textContent = '–';
+      btnMinimizar.title = "Minimizar";
+    }
+  });
 </script>
 
 </body>
