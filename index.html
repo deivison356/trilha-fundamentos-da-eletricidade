@@ -11,231 +11,187 @@
       font-family: Arial, sans-serif;
       background: #f5f5f5;
     }
-    #cronometro {
-      background-color: #222;
-      color: white;
-      text-align: center;
+    #telaLogin, #telaProva {
+      display: none;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    #telaLogin.active, #telaProva.active {
+      display: flex;
+    }
+    .calculadora {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      gap: 5px;
+      margin-top: 10px;
+    }
+    .calculadora button {
       padding: 10px;
       font-size: 18px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 10000;
-      display: none;
-    }
-    #alerta, #alertaTempo, #mensagem {
-      display: none;
-      position: fixed;
-      top: 50px;
-      left: 0;
-      width: 100%;
-      background-color: #d32f2f;
-      color: white;
-      text-align: center;
-      padding: 10px;
-      font-weight: bold;
-      z-index: 9999;
-    }
-    #acesso {
-      width: 100%;
-      max-width: 600px;
-      margin: 100px auto 40px auto;
-      padding: 20px;
       background: white;
-      border-radius: 8px;
-      text-align: center;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border: 1px solid #ccc;
+      color: black;
     }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 5px;
-      width: 80%;
-      max-width: 400px;
-      box-sizing: border-box;
-    }
-    button {
-      cursor: pointer;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 18px;
-      padding: 12px 20px;
-    }
-    #iframeProva {
-      width: 100%;
-      height: calc(100vh - 60px);
-      border: none;
-      display: none;
-      margin-top: 60px;
-    }
-
-    #calculadora {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 260px;
-      background: #222;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      color: white;
-      z-index: 11000;
-    }
-    #calculadora .title {
-      margin-bottom: 10px;
-      font-weight: bold;
-      font-size: 16px;
-      text-align: center;
-    }
-    #calcDisplay {
-      width: 100%;
-      padding: 8px;
-      font-size: 20px;
-      border-radius: 4px;
-      border: none;
-      margin-bottom: 10px;
-      text-align: right;
-      background: #333;
-      color: white;
-    }
-    .calc-row {
+    .operadores {
       display: flex;
       justify-content: space-between;
       margin-bottom: 5px;
     }
-    .calc-numbers, .calc-operators, .calc-actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+    .operadores button {
+      flex: 1;
+      margin-right: 5px;
+      padding: 10px;
+      font-size: 16px;
     }
-    .calc-numbers button {
-      width: 60px;
-      height: 50px;
-      margin: 3px;
-      font-size: 20px;
+    #resultado {
+      margin-top: 5px;
+      padding: 10px;
+      font-size: 18px;
+      background: white;
+      border: 1px solid #ccc;
+      width: 180px;
+      text-align: right;
     }
-    .calc-operators button {
-      width: 60px;
-      height: 40px;
-      margin: 3px;
-      background-color: #555;
-    }
-    .calc-actions button {
-      width: 80px;
-      height: 40px;
-      margin: 3px;
-      background-color: #444;
-    }
-    #calculadora button {
-      background: #444;
-      border: none;
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-      user-select: none;
-    }
-    #calculadora button:hover {
-      background: #666;
+    #alerta {
+      color: red;
+      font-weight: bold;
+      display: none;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
-
-<div id="cronometro">Tempo restante: 60:00</div>
-<div id="alerta">⚠️ Você saiu da aba ou da tela cheia. Penalização aplicada.</div>
-<div id="alertaTempo">⚠️ Faltam apenas 20 minutos para o término da prova.</div>
-<div id="mensagem"></div>
-
-<div id="acesso">
+<div id="telaLogin" class="active">
   <h2>Digite a senha para iniciar a prova</h2>
-  <input type="password" id="senha" placeholder="Senha" />
-  <button id="btnIniciar">Iniciar Prova</button>
+  <input type="password" id="senha" placeholder="DDMMAAAA" />
+  <button onclick="verificarSenha()">Iniciar</button>
 </div>
-
-<iframe id="iframeProva"
-  src="https://docs.google.com/forms/d/e/1FAIpQLSfZB9lfPqm5MUZC7UpaU2sYHxF4-Tdi-HIbKTyXLKW2bjDRpA/viewform?usp=dialog"
-></iframe>
-
-<!-- CALCULADORA -->
-<div id="calculadora">
-  <div class="title">Calculadora</div>
-  <input type="text" id="calcDisplay" readonly />
-
-  <div class="calc-operators">
-    <button onclick="calcPress('+')">+</button>
-    <button onclick="calcPress('-')">−</button>
-    <button onclick="calcPress('*')">×</button>
-    <button onclick="calcPress('/')">÷</button>
+<div id="telaProva">
+  <div id="alerta">Você saiu da prova! Penalização de 20 minutos.</div>
+  <iframe id="formulario" src="https://docs.google.com/forms/d/e/1FAIpQLSfTH8OBK_0T3HNO9CqTGqKSjXcjxpKJJ0PImnJceY6R7usQ-A/viewform?embedded=true" width="100%" height="80%" frameborder="0" marginheight="0" marginwidth="0">Carregando…</iframe>
+  <div id="resultado"></div>
+  <div class="operadores">
+    <button onclick="insert('+')">+</button>
+    <button onclick="insert('-')">-</button>
+    <button onclick="insert('*')">×</button>
+    <button onclick="insert('/')">÷</button>
+    <button onclick="insert(',')">,</button>
   </div>
-
-  <div class="calc-numbers">
-    <button onclick="calcPress('7')">7</button>
-    <button onclick="calcPress('8')">8</button>
-    <button onclick="calcPress('9')">9</button>
-    <button onclick="calcPress('4')">4</button>
-    <button onclick="calcPress('5')">5</button>
-    <button onclick="calcPress('6')">6</button>
-    <button onclick="calcPress('1')">1</button>
-    <button onclick="calcPress('2')">2</button>
-    <button onclick="calcPress('3')">3</button>
-    <button onclick="calcPress('0')">0</button>
-  </div>
-
-  <div class="calc-actions">
-    <button onclick="calcBackspace()">←</button>
-    <button onclick="calcClear()">C</button>
-    <button onclick="calcCalculate()">=</button>
+  <div class="calculadora">
+    <button onclick="insert('7')">7</button>
+    <button onclick="insert('8')">8</button>
+    <button onclick="insert('9')">9</button>
+    <button onclick="insert('4')">4</button>
+    <button onclick="insert('5')">5</button>
+    <button onclick="insert('6')">6</button>
+    <button onclick="insert('1')">1</button>
+    <button onclick="insert('2')">2</button>
+    <button onclick="insert('3')">3</button>
+    <button onclick="insert('0')">0</button>
+    <button onclick="backspace()">←</button>
+    <button onclick="limpar()">C</button>
+    <button onclick="calcular()">=</button>
   </div>
 </div>
-
 <script>
-  let calcExpression = '';
+  let tempoRestante = 3600;
+  let penalidade = 1200;
+  let intervalo;
+  const beep = new Audio("https://www.soundjay.com/button/beep-07.wav");
 
-  function calcPress(valor) {
-    calcExpression += valor;
-    document.getElementById('calcDisplay').value = calcExpression;
-  }
-
-  function calcClear() {
-    calcExpression = '';
-    document.getElementById('calcDisplay').value = '';
-  }
-
-  function calcBackspace() {
-    calcExpression = calcExpression.slice(0, -1);
-    document.getElementById('calcDisplay').value = calcExpression;
-  }
-
-  function calcCalculate() {
-    try {
-      let resultado = eval(calcExpression);
-      document.getElementById('calcDisplay').value = resultado;
-      calcExpression = resultado.toString();
-    } catch {
-      document.getElementById('calcDisplay').value = 'Erro';
-      calcExpression = '';
-    }
-  }
-
-  document.getElementById("btnIniciar").addEventListener("click", () => {
-    const senhaInput = document.getElementById("senha").value;
+  function verificarSenha() {
+    const senha = document.getElementById("senha").value;
     const hoje = new Date();
-    const senhaCorreta = hoje.getDate().toString().padStart(2, '0') +
-                          (hoje.getMonth()+1).toString().padStart(2, '0') +
-                          hoje.getFullYear();
-
-    if (senhaInput === senhaCorreta) {
-      document.getElementById("acesso").style.display = "none";
-      document.getElementById("iframeProva").style.display = "block";
-      document.getElementById("cronometro").style.display = "block";
+    const senhaCorreta = String(hoje.getDate()).padStart(2, '0') + String(hoje.getMonth() + 1).padStart(2, '0') + hoje.getFullYear();
+    if (senha === senhaCorreta) {
+      iniciarProva();
+      entrarEmTelaCheia();
     } else {
       alert("Senha incorreta!");
     }
-  });
-</script>
+  }
 
+  function iniciarProva() {
+    document.getElementById("telaLogin").classList.remove("active");
+    document.getElementById("telaProva").classList.add("active");
+    iniciarContador();
+  }
+
+  function entrarEmTelaCheia() {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.mozRequestFullScreen) {
+      document.documentElement.mozRequestFullScreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen();
+    } else if (document.documentElement.msRequestFullscreen) {
+      document.documentElement.msRequestFullscreen();
+    }
+  }
+
+  function iniciarContador() {
+    intervalo = setInterval(() => {
+      tempoRestante--;
+      atualizarTempo();
+      if (tempoRestante <= 0) {
+        clearInterval(intervalo);
+        alert("Tempo esgotado!");
+        window.close();
+      }
+    }, 1000);
+  }
+
+  function atualizarTempo() {
+    const minutos = Math.floor(tempoRestante / 60);
+    const segundos = tempoRestante % 60;
+    document.getElementById("resultado").innerText = `Tempo restante: ${minutos}m ${segundos}s`;
+  }
+
+  function insert(valor) {
+    document.getElementById("resultado").innerText += valor;
+  }
+
+  function limpar() {
+    document.getElementById("resultado").innerText = "";
+  }
+
+  function backspace() {
+    const atual = document.getElementById("resultado").innerText;
+    document.getElementById("resultado").innerText = atual.slice(0, -1);
+  }
+
+  function calcular() {
+    try {
+      let expressao = document.getElementById("resultado").innerText.replace(/×/g, '*').replace(/÷/g, '/');
+      document.getElementById("resultado").innerText = eval(expressao);
+    } catch (e) {
+      alert("Expressão inválida!");
+    }
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === 'hidden') {
+      aplicarPenalidade();
+    }
+  });
+
+  document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement) {
+      aplicarPenalidade();
+    }
+  });
+
+  function aplicarPenalidade() {
+    tempoRestante -= penalidade;
+    if (tempoRestante < 0) tempoRestante = 0;
+    document.getElementById("alerta").style.display = "block";
+    beep.play();
+    setTimeout(() => {
+      document.getElementById("alerta").style.display = "none";
+    }, 4000);
+  }
+</script>
 </body>
 </html>
